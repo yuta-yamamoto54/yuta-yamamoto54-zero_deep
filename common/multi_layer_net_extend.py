@@ -96,6 +96,8 @@ class MultiLayerNetExtend:
         y = self.predict(x, train_flg)
 
         weight_decay = 0
+        #隠れ層の重みをすべて合計して損失関数に加える
+        #=>大きな値を持つ重みにペナルティ
         for idx in range(1, self.hidden_layer_num + 2):
             W = self.params['W' + str(idx)]
             weight_decay += 0.5 * self.weight_decay_lambda * np.sum(W**2)
@@ -130,7 +132,7 @@ class MultiLayerNetExtend:
         for idx in range(1, self.hidden_layer_num+2):
             grads['W' + str(idx)] = numerical_gradient(loss_W, self.params['W' + str(idx)])
             grads['b' + str(idx)] = numerical_gradient(loss_W, self.params['b' + str(idx)])
-            
+            #バッチノルムを挟むとき
             if self.use_batchnorm and idx != self.hidden_layer_num+1:
                 grads['gamma' + str(idx)] = numerical_gradient(loss_W, self.params['gamma' + str(idx)])
                 grads['beta' + str(idx)] = numerical_gradient(loss_W, self.params['beta' + str(idx)])
@@ -153,7 +155,8 @@ class MultiLayerNetExtend:
         # 設定
         grads = {}
         for idx in range(1, self.hidden_layer_num+2):
-            grads['W' + str(idx)] = self.layers['Affine' + str(idx)].dW + self.weight_decay_lambda * self.params['W' + str(idx)]
+            grads['W' + str(idx)] = self.layers['Affine' + str(idx)].dW \
+                                    + self.weight_decay_lambda * self.params['W' + str(idx)]
             grads['b' + str(idx)] = self.layers['Affine' + str(idx)].db
 
             if self.use_batchnorm and idx != self.hidden_layer_num+1:

@@ -47,7 +47,6 @@ class MultiLayerNet:
 
         self.last_layer = SoftmaxWithLoss()
 
-    def __init_weight(self, weight_init_std):
         """重みの初期値設定
 
         Parameters
@@ -59,6 +58,7 @@ class MultiLayerNet:
         all_size_list = [self.input_size] + self.hidden_size_list + [self.output_size]
         for idx in range(1, len(all_size_list)):
             scale = weight_init_std
+            #lower()すべての文字を小文字に
             if str(weight_init_std).lower() in ('relu', 'he'):
                 scale = np.sqrt(2.0 / all_size_list[idx - 1])  # ReLUを使う場合に推奨される初期値
             elif str(weight_init_std).lower() in ('sigmoid', 'xavier'):
